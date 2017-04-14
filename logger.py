@@ -13,8 +13,8 @@ import sys
 class FilePrintLogger(object):
     """Logger delegation class to set up a print log and file log."""
 
-    def __init__(self, logger_name, print_level=logging.INFO, file_path='.',
-                 file_level=logging.INFO):
+    def __init__(self, logger_name, print_level=logging.INFO, file_path=None,
+                 file_level=None):
         """Set up the instance with a logger name.
 
         Optionally set the print level, log file path and log file level.
@@ -29,8 +29,10 @@ class FilePrintLogger(object):
         self._print_log.setFormatter(logging.Formatter('%(message)s'))
         self._logger.addHandler(self._print_log)
 
-        self.set_print_handler_level(print_level)
-        self.set_file_handler(file_path, file_level)
+        if print_level:
+            self.set_print_handler_level(print_level)
+        if file_path and file_level:
+            self.set_file_handler(file_path, file_level)
 
     def __getattr__(self, name):
         """Support delegation to logger."""
@@ -46,11 +48,13 @@ class FilePrintLogger(object):
 
         self._file_log = logging.handlers.RotatingFileHandler(
             path, maxBytes=1024 * 1000, backupCount=5)
-        self._file_log.setLevel(level)
+        self.set_file_handler_level(level)
         log_format = logging.Formatter(
             '%(asctime)s|%(levelname)s|%(process)d|%(module)s@%(lineno)s:'
             '%(funcName)s %(message)s')
         self._file_log.setFormatter(log_format)
         self._logger.addHandler(self._file_log)
 
+    def set_file_handler_level(self, level):
+        self._file_log.setLevel(level)
 
