@@ -56,5 +56,5 @@ class FilePrintLogger(object):
         self._logger.addHandler(self._file_log)
 
     def set_file_handler_level(self, level):
+        """Set the logging level of the file log."""
         self._file_log.setLevel(level)
-
